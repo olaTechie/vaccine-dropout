@@ -1,0 +1,118 @@
+import { useState } from 'react';
+import { useScenarioStore } from '../../state/scenario.js';
+import { buildHashURL } from '../../lib/paths.js';
+import BudgetSlider from './BudgetSlider.jsx';
+
+export default function SimulationControls({
+  cameraMode,
+  setCameraMode,
+  scale,
+  setScale,
+  className = 'bg-abyss/80 backdrop-blur-lg border border-white/10',
+}) {
+  const { interventions, toggleIntervention, rule, setRule } = useScenarioStore();
+  const [copyStatus, setCopyStatus] = useState(null); // 'copied' | 'failed' | null
+
+  const handleCopy = async () => {
+    try {
+      const { encodeToURL } = useScenarioStore.getState();
+      const url = buildHashURL('/simulation', encodeToURL());
+      await navigator.clipboard.writeText(url);
+      setCopyStatus('copied');
+    } catch {
+      setCopyStatus('failed');
+    } finally {
+      setTimeout(() => setCopyStatus(null), 2200);
+    }
+  };
+
+  return (
+    <aside className={`w-full p-6 overflow-y-auto ${className}`}>
+      <h2 className="font-serif text-2xl mb-2">Simulation Controls</h2>
+      <p className="text-sm text-muted mb-6">
+        Tune the intervention mix, then copy a link that reopens this exact state.
+      </p>
+
+      <fieldset className="mb-6">
+        <legend className="text-xs uppercase tracking-wider text-muted mb-2">Camera</legend>
+        {/* Native radio inputs deliver the full WAI-ARIA radio interaction model
+            (single tab stop, arrow-key navigation, screen-reader announcement)
+            for free; we just style the labels to match the rest of the HUD. */}
+        <div className="flex gap-2">
+          {['orbit', 'flythrough', 'top'].map((m) => {
+            const active = cameraMode === m;
+            return (
+              <label
+                key={m}
+                className={`px-3 py-1 text-xs rounded-full border cursor-pointer transition focus-within:ring-2 focus-within:ring-saffron/60 ${
+                  active ? 'border-saffron text-saffron' : 'border-white/10 text-muted hover:text-moonlight'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="camera-mode"
+                  value={m}
+                  checked={active}
+                  onChange={() => setCameraMode(m)}
+                  className="sr-only"
+                />
+                {m}
+              </label>
+            );
+          })}
+        </div>
+      </fieldset>
+
+      <fieldset className="mb-6">
+        <legend className="text-xs uppercase tracking-wider text-muted mb-2">Scale</legend>
+        <select value={scale} onChange={(e) => setScale(e.target.value)} className="w-full bg-dusk border border-white/10 rounded-xl p-2">
+          <option value="family">Family (1)</option>
+          <option value="community">Community (100)</option>
+          <option value="state">State (10k)</option>
+          <option value="nation">Nation (3M particles)</option>
+        </select>
+      </fieldset>
+
+      <fieldset className="mb-6">
+        <legend className="text-xs uppercase tracking-wider text-muted mb-2">Interventions</legend>
+        <div className="space-y-2">
+          {['a1', 'a2', 'a3', 'a4'].map((k) => (
+            <label key={k} className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={interventions[k]} onChange={() => toggleIntervention(k)} className="accent-saffron" />
+              <span>{{ a1: 'SMS', a2: 'CHW', a3: 'Recall', a4: 'Incentive' }[k]}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset className="mb-6">
+        <legend className="text-xs uppercase tracking-wider text-muted mb-2">Targeting rule</legend>
+        <select value={rule} onChange={(e) => setRule(e.target.value)} className="w-full bg-dusk border border-white/10 rounded-xl p-2">
+          <option value="uniform_sms">Uniform SMS</option>
+          <option value="uniform_chw">Uniform CHW</option>
+          <option value="top30_risk">Top-30% risk</option>
+          <option value="top10_incentive">Top-10% + incentive</option>
+          <option value="rl_optimised">RL-optimised</option>
+        </select>
+      </fieldset>
+
+      <div className="mb-6"><BudgetSlider /></div>
+
+      <button
+        type="button"
+        onClick={handleCopy}
+        className="w-full py-2 border border-white/10 rounded-xl text-sm hover:border-saffron/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saffron/60"
+      >
+        Copy snapshot URL
+      </button>
+      <p
+        role="status"
+        aria-live="polite"
+        className={`mt-2 text-xs text-center transition-opacity ${copyStatus ? 'opacity-100' : 'opacity-0'}`}
+      >
+        {copyStatus === 'copied' && 'URL copied to clipboard'}
+        {copyStatus === 'failed' && 'Copy failed — clipboard unavailable'}
+      </p>
+    </aside>
+  );
+}
