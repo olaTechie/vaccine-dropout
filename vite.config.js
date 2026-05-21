@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/nigeria-vaccine-dropout-atlas/',
+  base: '/dtp-dropout-atlas/',
   build: {
     target: 'es2022',
     // three.js core is ~720 kB raw (~180 kB gzipped) and cannot be
