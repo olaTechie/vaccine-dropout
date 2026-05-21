@@ -1,25 +1,28 @@
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import ScenarioTable from '../components/charts/ScenarioTable.jsx';
 import BudgetSlider from '../components/hud/BudgetSlider.jsx';
 import MetricCard from '../components/shared/MetricCard.jsx';
+import DecisionSnapshot from '../components/shared/DecisionSnapshot.jsx';
+import RouteIdentity from '../components/shared/RouteIdentity.jsx';
+import ScenarioCompareStrip from '../components/shared/ScenarioCompareStrip.jsx';
 import { loadData, loadFallbackScenario } from '../lib/dataLoader.js';
 import { buildCubeIndex, interpolateScenario } from '../lib/interp.js';
 import { useScenarioStore } from '../state/scenario.js';
 import { formatNaira, formatPct } from '../lib/format.js';
-
-const RULE_LABELS = {
-  top30_risk: 'Top 30% risk targeted',
-  top20_risk: 'Top 20% risk targeted',
-  universal: 'Universal support',
-  status_quo: 'Status quo',
-};
+import { getRuleLabel } from '../lib/scenarioSummary.js';
 
 export default function Policy() {
   const [cube, setCube] = useState(null);
   const [status, setStatus] = useState('loading');
   const [fallbackLive, setFallbackLive] = useState(null);
-  const { budget, rule, sms_rrr, chw_rrr } = useScenarioStore();
+  const [params] = useSearchParams();
+  const { budget, rule, sms_rrr, chw_rrr, interventions } = useScenarioStore();
+
+  useEffect(() => {
+    if (!params.toString()) return;
+    useScenarioStore.getState().decodeFromURL(params.toString());
+  }, [params]);
 
   useEffect(() => {
     let cancelled = false;
@@ -46,7 +49,8 @@ export default function Policy() {
   const live = status === 'cube' && cube
     ? interpolateScenario(cube, { budget, rule, sms_rrr, chw_rrr })
     : fallbackLive;
-  const ruleLabel = RULE_LABELS[rule] || rule.replaceAll('_', ' ');
+  const ruleLabel = getRuleLabel(rule);
+  const scenarioSearch = useScenarioStore.getState().encodeToURL();
 
   return (
     <main className="min-h-screen">
@@ -98,6 +102,27 @@ export default function Policy() {
             Could not load scenario data. Headline metrics are unavailable. Open the Explorer for the underlying outputs while the bundle is restored.
           </div>
         )}
+
+        <div className="mb-6 space-y-6">
+          <DecisionSnapshot
+            live={live}
+            rule={rule}
+            interventions={interventions}
+            route="/policy"
+            search={scenarioSearch}
+            title="Policy snapshot"
+          />
+          <ScenarioCompareStrip live={live} rule={rule} />
+        </div>
+
+        <div className="mb-10">
+          <RouteIdentity
+            accent="policy"
+            eyebrow="Decision cockpit"
+            title="Translate model outputs into a defensible policy snapshot."
+            body="This route is for comparing rules, copying a brief-ready scenario summary, and checking whether projected coverage gains still respect cost and equity constraints."
+          />
+        </div>
 
         <section className="grid gap-4 md:grid-cols-3 mb-10">
           <MetricCard

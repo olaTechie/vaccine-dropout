@@ -10,6 +10,7 @@ import Equity from '../components/explorer/tabs/Equity.jsx';
 import Validation from '../components/explorer/tabs/Validation.jsx';
 import Downloads from '../components/explorer/tabs/Downloads.jsx';
 import MetricCard from '../components/shared/MetricCard.jsx';
+import RouteIdentity from '../components/shared/RouteIdentity.jsx';
 import { loadData } from '../lib/dataLoader.js';
 import { formatNaira, formatPct } from '../lib/format.js';
 
@@ -159,6 +160,15 @@ export default function Explorer() {
             </div>
           </div>
         </header>
+
+        <div className="mb-6">
+          <RouteIdentity
+            accent="explorer"
+            eyebrow="Evidence archive"
+            title="Inspect the analysis chain behind every policy claim."
+            body="This route separates the evidence layers: cascade burden, prediction performance, SHAP explanations, policy learning, microsimulation, equity, validation, and downloadable artefacts."
+          />
+        </div>
 
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 mb-10">
           <MetricCard

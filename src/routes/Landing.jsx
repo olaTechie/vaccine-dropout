@@ -15,6 +15,8 @@ const DESTINATIONS = [
     eyebrow: 'Narrative',
     title: 'Start with the evidence story',
     body: 'Walk the immunisation pathway from household contact to the dropout corridor and rescue signals.',
+    role: 'Human pathway',
+    accent: 'border-saffron/35 bg-saffron/8 text-saffron',
   },
   {
     to: '/policy',
@@ -22,6 +24,8 @@ const DESTINATIONS = [
     eyebrow: 'Decisions',
     title: 'Compare intervention scenarios',
     body: 'Inspect completion, cost, and equity in one decision surface for policy translation.',
+    role: 'Decision cockpit',
+    accent: 'border-verdigris/35 bg-verdigris/8 text-verdigris',
   },
   {
     to: '/simulation',
@@ -29,6 +33,17 @@ const DESTINATIONS = [
     eyebrow: 'Sandbox',
     title: 'Stage the intervention pathway',
     body: 'Tune the intervention bundle and watch the scenario logic play out as a shareable journey.',
+    role: 'Intervention theatre',
+    accent: 'border-iris/35 bg-iris/8 text-iris',
+  },
+  {
+    to: '/explorer',
+    index: '04',
+    eyebrow: 'Evidence',
+    title: 'Inspect the full archive',
+    body: 'Open cascade, prediction, SHAP, microsimulation, equity, validation, and downloadable artefacts.',
+    role: 'Evidence archive',
+    accent: 'border-terracotta/35 bg-terracotta/8 text-terracotta',
   },
 ];
 
@@ -75,7 +90,17 @@ export default function Landing() {
           <EvidencePathway />
         </div>
 
-        <section className="mt-14 grid gap-4 lg:grid-cols-3">
+        <section className="mt-14">
+          <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <div>
+              <div className="text-xs uppercase tracking-[0.22em] text-muted">Route map</div>
+              <h2 className="mt-2 font-serif text-3xl">Move from pathway to policy, then back to evidence.</h2>
+            </div>
+            <p className="max-w-2xl text-sm leading-6 text-muted">
+              Each route has a different job: understand the dropout corridor, choose a rule, stage the bundle, and audit the evidence.
+            </p>
+          </div>
+          <div className="grid gap-4 lg:grid-cols-4">
           {DESTINATIONS.map((item) => (
             <Link
               key={item.to}
@@ -87,6 +112,9 @@ export default function Landing() {
                 <div className="font-mono text-xs text-moonlight/35">{item.index}</div>
               </div>
               <div>
+                <div className={`mt-5 inline-flex rounded-full border px-3 py-1 text-xs uppercase tracking-[0.16em] ${item.accent}`}>
+                  {item.role}
+                </div>
                 <h2 className="mt-5 font-serif text-3xl leading-tight">{item.title}</h2>
                 <p className="mt-4 text-sm leading-6 text-muted">{item.body}</p>
               </div>
@@ -96,6 +124,7 @@ export default function Landing() {
               </div>
             </Link>
           ))}
+          </div>
         </section>
       </section>
     </main>

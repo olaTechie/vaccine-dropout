@@ -19,20 +19,17 @@ import StableSimulationScene from '../scene/StableSimulationScene.jsx';
 import SimulationControls from '../components/hud/SimulationControls.jsx';
 import CanvasErrorBoundary from '../components/shared/CanvasErrorBoundary.jsx';
 import MetricCard from '../components/shared/MetricCard.jsx';
+import DecisionSnapshot from '../components/shared/DecisionSnapshot.jsx';
+import RouteIdentity from '../components/shared/RouteIdentity.jsx';
+import ScenarioCompareStrip from '../components/shared/ScenarioCompareStrip.jsx';
 import { useScenarioStore } from '../state/scenario.js';
+import { getRuleLabel } from '../lib/scenarioSummary.js';
 
 const SCALE_COPY = {
   family: 'Single household view',
   community: 'Community cohort view',
   state: 'State-level abstraction',
   nation: 'National footprint view',
-};
-
-const RULE_LABELS = {
-  top30_risk: 'Top 30% risk targeted',
-  top20_risk: 'Top 20% risk targeted',
-  universal: 'Universal support',
-  status_quo: 'Status quo',
 };
 
 const CHAPTERS = [
@@ -122,7 +119,8 @@ export default function Simulation() {
 
   const chapterData = CHAPTERS.find((item) => item.id === chapter) || CHAPTERS[0];
   const canRender3d = hasWebGL();
-  const ruleLabel = RULE_LABELS[rule] || rule.replaceAll('_', ' ');
+  const ruleLabel = getRuleLabel(rule);
+  const scenarioSearch = useScenarioStore.getState().encodeToURL();
   const lineChartTheme = {
     background: '#0D1220',
     border: '1px solid #1A2340',
@@ -255,6 +253,27 @@ export default function Simulation() {
             Scenario data could not be loaded. The control panel still works, but outcome metrics are unavailable until the data bundle is restored.
           </div>
         )}
+
+        <div className="mb-6 space-y-6">
+          <DecisionSnapshot
+            live={live}
+            rule={rule}
+            interventions={interventions}
+            route="/simulation"
+            search={scenarioSearch}
+            title="Simulation snapshot"
+          />
+          <ScenarioCompareStrip live={live} rule={rule} />
+        </div>
+
+        <div className="mb-10">
+          <RouteIdentity
+            accent="simulation"
+            eyebrow="Intervention theatre"
+            title="Stage the bundle, then leave with a shareable decision record."
+            body="This route keeps the human pathway visible while letting users tune the rule, budget, interventions, and scene scale behind a scenario."
+          />
+        </div>
 
         <section className="grid gap-4 md:grid-cols-3 mb-10">
           <MetricCard
