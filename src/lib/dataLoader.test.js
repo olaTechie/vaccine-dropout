@@ -13,7 +13,7 @@ describe('dataLoader', () => {
       json: () => Promise.resolve({ foo: 1 }),
     });
     const data = await loadData('cascade');
-    expect(fetch).toHaveBeenCalledWith('/dtp-dropout-atlas/data/cascade.json');
+    expect(fetch).toHaveBeenCalledWith('/vaccine-dropout/data/cascade.json');
     expect(data).toEqual({ foo: 1 });
   });
 

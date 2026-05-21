@@ -2,7 +2,7 @@
 
 Cinematic interactive website for the Nigeria DTP1 to DTP3 vaccine dropout study (Warwick Applied Health, Warwick Medical School). Built with Vite, React 19, React Three Fiber, Zustand, Tailwind, and Recharts.
 
-Production URL: https://olatechie.github.io/dtp-dropout-atlas/
+Production URL: https://olatechie.github.io/vaccine-dropout/
 
 ## Run locally
 
@@ -11,7 +11,7 @@ npm install --legacy-peer-deps
 npm run dev
 ```
 
-Dev server: http://localhost:5173/dtp-dropout-atlas/
+Dev server: http://localhost:5173/vaccine-dropout/
 
 `--legacy-peer-deps` is required because `@react-three/drei` still declares React 18 as a peer while the app runs on React 19.
 
@@ -19,7 +19,7 @@ Dev server: http://localhost:5173/dtp-dropout-atlas/
 
 ```bash
 npm run build        # emits dist/ (~2 MB)
-npm run preview      # serves dist at http://localhost:4173/dtp-dropout-atlas/
+npm run preview      # serves dist at http://localhost:4173/vaccine-dropout/
 ```
 
 ## Test

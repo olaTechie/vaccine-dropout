@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/dtp-dropout-atlas/',
+  base: '/vaccine-dropout/',
   build: {
     target: 'es2022',
     // three.js core is ~720 kB raw (~180 kB gzipped) and cannot be
